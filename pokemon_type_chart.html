@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Pokémon Type Effectiveness</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #121212;
+      color: #f0f0f0;
+      text-align: center;
+      padding: 20px;
+    }
+    h1, h2, p {
+      color: #ffffff;
+    }
+    .types-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 30px;
+    }
+    .type-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 6px;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+      transition: transform 0.2s;
+      min-width: 100px;
+    }
+    .type-btn:hover {
+      transform: scale(1.05);
+    }
+    .results {
+      font-size: 18px;
+      margin-top: 20px;
+    }
+    .highlight {
+      font-weight: bold;
+      color: #f78c6b;
+    }
+    .type-icon {
+      width: 20px;
+      height: 20px;
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Pokémon Type Effectiveness</h1>
+<p>Click a type to see its strengths and weaknesses.</p>
+
+<div class="types-container" id="typesContainer"></div>
+
+<div class="results" id="results"></div>
+
+<script>
+  const typeColors = {
+    Normal: "#A8A77A", Fire: "#EE8130", Water: "#6390F0", Electric: "#F7D02C",
+    Grass: "#7AC74C", Ice: "#96D9D6", Fighting: "#C22E28", Poison: "#A33EA1",
+    Ground: "#E2BF65", Flying: "#A98FF3", Psychic: "#F95587", Bug: "#A6B91A",
+    Rock: "#B6A136", Ghost: "#735797", Dragon: "#6F35FC", Dark: "#705746",
+    Steel: "#B7B7CE", Fairy: "#D685AD"
+  };
+
+  const typeIcons = {
+    Normal: "https://raw.githubusercontent.com/msikma/pokesprite/master/icons/types/normal.png",
+    Fire: "https://raw.githubusercontent.com/msikma/pokesprite/master/icons/types/fire.png",
+    Water: "https://raw.githubusercontent.com/msikma/pokesprite/master/icons/types/water.png",
+    Electric: "https://raw.githubusercontent.com/msikma/pokesprite/master/icons/types/electric.png",
+    Grass: "https://raw.githubusercontent.com/msikma/pokesprite/master/icons/types/grass.png",
+    Ice: "https://raw.githubusercontent.com/msikma/pokesprite/master/icons/types/ice.png",
+    Fighting: "https://raw.githubusercontent.com/msikma/pokesprite/master/icons/types/fighting.png",
+    Poison: "https://raw.githubusercontent.com/msikma/pokesprite/master/icons/types/poison.png",
+    Ground: "https://raw.githubusercontent.com/msikma/pokesprite/master/icons/types/ground.png",
+    Flying: "https://raw.githubusercontent.com/msikma/pokesprite/master/icons/types/flying.png",
+    Psychic: "https://raw.githubusercontent.com/msikma/pokesprite/master/icons/types/psychic.png",
+    Bug: "https://raw.githubusercontent.com/msikma/pokesprite/master/icons/types/bug.png",
+    Rock: "https://raw.githubusercontent.com/msikma/pokesprite/master/icons/types/rock.png",
+    Ghost: "https://raw.githubusercontent.com/msikma/pokesprite/master/icons/types/ghost.png",
+    Dragon: "https://raw.githubusercontent.com/msikma/pokesprite/master/icons/types/dragon.png",
+    Dark: "https://raw.githubusercontent.com/msikma/pokesprite/master/icons/types/dark.png",
+    Steel: "https://raw.githubusercontent.com/msikma/pokesprite/master/icons/types/steel.png",
+    Fairy: "https://raw.githubusercontent.com/msikma/pokesprite/master/icons/types/fairy.png"
+  };
+
+  const typeEffectiveness = {
+    Normal: { strongAgainst: [], weakAgainst: ["Rock", "Steel"] },
+    Fire: { strongAgainst: ["Grass", "Ice", "Bug", "Steel"], weakAgainst: ["Fire", "Water", "Rock", "Dragon"] },
+    Water: { strongAgainst: ["Fire", "Ground", "Rock"], weakAgainst: ["Water", "Grass", "Dragon"] },
+    Grass: { strongAgainst: ["Water", "Ground", "Rock"], weakAgainst: ["Fire", "Grass", "Poison", "Flying", "Bug", "Dragon", "Steel"] },
+    Electric: { strongAgainst: ["Water", "Flying"], weakAgainst: ["Electric", "Grass", "Dragon", "Ground"] },
+    Ice: { strongAgainst: ["Grass", "Ground", "Flying", "Dragon"], weakAgainst: ["Fire", "Water", "Ice", "Steel"] },
+    Fighting: { strongAgainst: ["Normal", "Ice", "Rock", "Dark", "Steel"], weakAgainst: ["Poison", "Flying", "Psychic", "Bug", "Fairy"] },
+    Poison: { strongAgainst: ["Grass", "Fairy"], weakAgainst: ["Poison", "Ground", "Rock", "Ghost"] },
+    Ground: { strongAgainst: ["Fire", "Electric", "Poison", "Rock", "Steel"], weakAgainst: ["Grass", "Bug"] },
+    Flying: { strongAgainst: ["Grass", "Fighting", "Bug"], weakAgainst: ["Electric", "Rock", "Steel"] },
+    Psychic: { strongAgainst: ["Fighting", "Poison"], weakAgainst: ["Psychic", "Steel", "Dark"] },
+    Bug: { strongAgainst: ["Grass", "Psychic", "Dark"], weakAgainst: ["Fire", "Fighting", "Poison", "Flying", "Ghost", "Steel", "Fairy"] },
+    Rock: { strongAgainst: ["Fire", "Ice", "Flying", "Bug"], weakAgainst: ["Fighting", "Ground", "Steel"] },
+    Ghost: { strongAgainst: ["Psychic", "Ghost"], weakAgainst: ["Dark"] },
+    Dragon: { strongAgainst: ["Dragon"], weakAgainst: ["Steel", "Fairy"] },
+    Dark: { strongAgainst: ["Psychic", "Ghost"], weakAgainst: ["Fighting", "Dark", "Fairy"] },
+    Steel: { strongAgainst: ["Ice", "Rock", "Fairy"], weakAgainst: ["Fire", "Water", "Electric", "Steel"] },
+    Fairy: { strongAgainst: ["Fighting", "Dragon", "Dark"], weakAgainst: ["Fire", "Poison", "Steel"] }
+  };
+
+  const types = Object.keys(typeEffectiveness);
+  const container = document.getElementById("typesContainer");
+  const results = document.getElementById("results");
+
+  types.forEach(type => {
+    const btn = document.createElement("button");
+    btn.className = "type-btn";
+    btn.style.backgroundColor = typeColors[type] || "#ccc";
+
+    const icon = document.createElement("img");
+    icon.src = typeIcons[type];
+    icon.alt = `${type} icon`;
+    icon.className = "type-icon";
+
+    btn.appendChild(icon);
+    btn.appendChild(document.createTextNode(type));
+    btn.onclick = () => showEffectiveness(type);
+    container.appendChild(btn);
+  });
+
+  function showEffectiveness(type) {
+    const { strongAgainst, weakAgainst } = typeEffectiveness[type];
+
+    // Find types that are strong or weak against this type (reverse)
+    const weakTo = types.filter(t => typeEffectiveness[t].strongAgainst.includes(type));
+    const resists = types.filter(t => typeEffectiveness[t].weakAgainst.includes(type));
+
+    results.innerHTML = `
+      <h2>${type} Type Analysis</h2>
+      <p><span class="highlight">${type}</span> is <strong>super effective against</strong>: ${strongAgainst.join(", ") || "None"}</p>
+      <p><span class="highlight">${type}</span> is <strong>not very effective against</strong>: ${weakAgainst.join(", ") || "None"}</p>
+      <p><span class="highlight">${type}</span> is <strong>weak to</strong> (receives super effective damage from): ${weakTo.join(", ") || "None"}</p>
+      <p><span class="highlight">${type}</span> <strong>resists</strong> (receives less damage from): ${resists.join(", ") || "None"}</p>
+    `;
+  }
+</script>
+
+</body>
+</html>
