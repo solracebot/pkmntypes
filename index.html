@@ -22,20 +22,26 @@
       margin-bottom: 30px;
     }
     .type-btn {
+      background-size: contain;
+      background-position: center;
+      background-repeat: no-repeat;
+      width: 120px;
+      height: 50px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.2s;
       display: flex;
       align-items: center;
-      gap: 6px;
-      padding: 10px 15px;
-      border: none;
-      border-radius: 6px;
-      color: white;
-      cursor: pointer;
+      justify-content: center;
       font-weight: bold;
-      transition: transform 0.2s;
-      min-width: 100px;
+      font-size: 14px;
+      color: #fff;
+      text-shadow: 0 0 3px #000;
+      padding: 0;
     }
     .type-btn:hover {
-      transform: scale(1.05);
+      transform: scale(1.1);
     }
     .results {
       font-size: 18px;
@@ -44,11 +50,6 @@
     .highlight {
       font-weight: bold;
       color: #f78c6b;
-    }
-    .type-icon {
-      width: 20px;
-      height: 20px;
-      vertical-align: middle;
     }
   </style>
 </head>
@@ -104,15 +105,8 @@
   types.forEach(type => {
     const btn = document.createElement("button");
     btn.className = "type-btn";
-    btn.style.backgroundColor = typeColors[type] || "#ccc";
-
-    const icon = document.createElement("img");
-    icon.src = typeIcons[type];
-    icon.alt = `${type} icon`;
-    icon.className = "type-icon";
-
-    btn.appendChild(icon);
-    btn.appendChild(document.createTextNode(type));
+    btn.style.backgroundImage = `url(${typeIcons[type]})`;
+    btn.title = type;
     btn.onclick = () => showEffectiveness(type);
     container.appendChild(btn);
   });
@@ -120,7 +114,6 @@
   function showEffectiveness(type) {
     const { strongAgainst, weakAgainst } = typeEffectiveness[type];
 
-    // Find types that are strong or weak against this type (reverse)
     const weakTo = types.filter(t => typeEffectiveness[t].strongAgainst.includes(type));
     const resists = types.filter(t => typeEffectiveness[t].weakAgainst.includes(type));
 
