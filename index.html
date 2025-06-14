@@ -70,26 +70,12 @@
     Steel: "#B7B7CE", Fairy: "#D685AD"
   };
 
-  const typeIcons = {
-    Normal: "https://raw.githubusercontent.com/msikma/pokesprite/master/icons/types/normal.png",
-    Fire: "https://raw.githubusercontent.com/msikma/pokesprite/master/icons/types/fire.png",
-    Water: "https://raw.githubusercontent.com/msikma/pokesprite/master/icons/types/water.png",
-    Electric: "https://raw.githubusercontent.com/msikma/pokesprite/master/icons/types/electric.png",
-    Grass: "https://raw.githubusercontent.com/msikma/pokesprite/master/icons/types/grass.png",
-    Ice: "https://raw.githubusercontent.com/msikma/pokesprite/master/icons/types/ice.png",
-    Fighting: "https://raw.githubusercontent.com/msikma/pokesprite/master/icons/types/fighting.png",
-    Poison: "https://raw.githubusercontent.com/msikma/pokesprite/master/icons/types/poison.png",
-    Ground: "https://raw.githubusercontent.com/msikma/pokesprite/master/icons/types/ground.png",
-    Flying: "https://raw.githubusercontent.com/msikma/pokesprite/master/icons/types/flying.png",
-    Psychic: "https://raw.githubusercontent.com/msikma/pokesprite/master/icons/types/psychic.png",
-    Bug: "https://raw.githubusercontent.com/msikma/pokesprite/master/icons/types/bug.png",
-    Rock: "https://raw.githubusercontent.com/msikma/pokesprite/master/icons/types/rock.png",
-    Ghost: "https://raw.githubusercontent.com/msikma/pokesprite/master/icons/types/ghost.png",
-    Dragon: "https://raw.githubusercontent.com/msikma/pokesprite/master/icons/types/dragon.png",
-    Dark: "https://raw.githubusercontent.com/msikma/pokesprite/master/icons/types/dark.png",
-    Steel: "https://raw.githubusercontent.com/msikma/pokesprite/master/icons/types/steel.png",
-    Fairy: "https://raw.githubusercontent.com/msikma/pokesprite/master/icons/types/fairy.png"
-  };
+  const typeIcons = {};
+  const iconPath = "icons/types/";
+  const types = Object.keys(typeColors);
+  types.forEach(type => {
+    typeIcons[type] = `${iconPath}${type.toLowerCase()}.png`;
+  });
 
   const typeEffectiveness = {
     Normal: { strongAgainst: [], weakAgainst: ["Rock", "Steel"] },
@@ -112,7 +98,6 @@
     Fairy: { strongAgainst: ["Fighting", "Dragon", "Dark"], weakAgainst: ["Fire", "Poison", "Steel"] }
   };
 
-  const types = Object.keys(typeEffectiveness);
   const container = document.getElementById("typesContainer");
   const results = document.getElementById("results");
 
